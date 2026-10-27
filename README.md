@@ -2,20 +2,20 @@
 
 **Scaling GPU KV-Cache Efficiency and Inference Concurrency for Autonomous Agents**
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23668958.svg)](https://doi.org/10.5281/zenodo.23668958)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23698048.svg)](https://doi.org/10.5281/zenodo.23698048)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](LICENSE)
-![Status: preprint draft](https://img.shields.io/badge/status-preprint%20draft%20v0.2-orange.svg)
+![Status: preprint v0.2](https://img.shields.io/badge/status-preprint%20v0.2-orange.svg)
 
-> **Preprint, not peer-reviewed.** Version v0.1 is permanently archived on Zenodo with a DOI. Draft v0.2 (in this repository) adds figures and minor fixes; the method and the measured results are unchanged.
+> **Preprint, not peer-reviewed.** Every version is permanently archived on Zenodo with its own DOI. v0.2 adds figures and minor fixes to v0.1; the method and the measured results are unchanged.
 
 **Author:** Rahat Hasan · [Akkhar-Labs](https://github.com/Akkhar-Labs) · Bogura, Bangladesh · ORCID [0009-0003-6184-5269](https://orcid.org/0009-0003-6184-5269)
 
 | Version | Date | PDF | Archive |
 |---|---|---|---|
-| **v0.2 draft** (latest) | 2026-10-27 | [`paper/HashedContext-draft-v0.2.pdf`](paper/HashedContext-draft-v0.2.pdf) | this repository |
+| **v0.2** (latest) | 2026-10-27 | [`paper/HashedContext-draft-v0.2.pdf`](paper/HashedContext-draft-v0.2.pdf) | Zenodo · [10.5281/zenodo.23698048](https://doi.org/10.5281/zenodo.23698048) |
 | v0.1 | 2026-10-26 | [`paper/HashedContext-draft-v0.1.pdf`](paper/HashedContext-draft-v0.1.pdf) | Zenodo · [10.5281/zenodo.23668958](https://doi.org/10.5281/zenodo.23668958) |
 
-The concept DOI [10.5281/zenodo.23668957](https://doi.org/10.5281/zenodo.23668957) always resolves to the newest version archived on Zenodo.
+The PDFs in this repository are identical to the files archived on Zenodo. The concept DOI [10.5281/zenodo.23668957](https://doi.org/10.5281/zenodo.23668957) always resolves to the newest version.
 
 ![HashedContext overview: append-only context vs. HashedContext, the HashGate operation, and the serving stack with the local HashVault](assets/overview.png)
 
@@ -76,8 +76,8 @@ In this initial evaluation, the model still detected a single-line mutation in t
 
 - [x] Architecture and formal model
 - [x] Early benchmark on a production endpoint
-- [x] Preprint archived on Zenodo with a DOI (v0.1)
-- [x] Figures for architecture, memory, caching, and cost analysis (v0.2)
+- [x] Preprint v0.1 archived on Zenodo with a DOI
+- [x] Preprint v0.2 archived on Zenodo, adding figures for architecture, memory, caching, and cost analysis
 - [ ] Extended benchmarks across models and workloads
 - [ ] Reference implementation
 - [ ] Submission to arXiv / a peer-reviewed venue
@@ -89,7 +89,7 @@ In this initial evaluation, the model still detected a single-line mutation in t
 
 ## Citation
 
-If you reference this work, please cite the archived version (see also [`CITATION.cff`](CITATION.cff)):
+If you reference this work, please cite the latest archived version (see also [`CITATION.cff`](CITATION.cff)):
 
 ```bibtex
 @misc{hasan2026hashedcontext,
@@ -97,11 +97,13 @@ If you reference this work, please cite the archived version (see also [`CITATIO
   author    = {Hasan, Rahat},
   year      = {2026},
   publisher = {Zenodo},
-  version   = {v0.1},
-  doi       = {10.5281/zenodo.23668958},
-  url       = {https://doi.org/10.5281/zenodo.23668958}
+  version   = {v0.2},
+  doi       = {10.5281/zenodo.23698048},
+  url       = {https://doi.org/10.5281/zenodo.23698048}
 }
 ```
+
+To cite the work independent of version, use the concept DOI [10.5281/zenodo.23668957](https://doi.org/10.5281/zenodo.23668957).
 
 ## License
 
