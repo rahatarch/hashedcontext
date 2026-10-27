@@ -7,13 +7,40 @@ authors:
     given-names: Rahat
     email: rahathasan5773@gmail.com
     affiliation: Akkhar-Labs
-version: "0.1-draft"
-date-released: 2026-10-12
+    orcid: "https://orcid.org/0009-0003-6184-5269"
+version: "0.2-draft"
+date-released: 2026-10-27
+doi: 10.5281/zenodo.23668958
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23668958
+    description: "Version v0.1 archived on Zenodo"
+  - type: doi
+    value: 10.5281/zenodo.23668957
+    description: "Concept DOI; resolves to the latest version on Zenodo"
 license: CC-BY-4.0
 repository-code: "https://github.com/rahatarch/hashedcontext"
+url: "https://doi.org/10.5281/zenodo.23668958"
 keywords:
   - LLM inference
   - KV-cache
   - autonomous agents
   - content-addressed storage
   - context deduplication
+  - GPU memory
+  - prefix caching
+  - RadixAttention
+preferred-citation:
+  type: article
+  title: "Scaling GPU KV-Cache Efficiency and Inference Concurrency for Autonomous Agents with HashedContext"
+  authors:
+    - family-names: Hasan
+      given-names: Rahat
+      affiliation: Akkhar-Labs
+      orcid: "https://orcid.org/0009-0003-6184-5269"
+  year: 2026
+  publisher:
+    name: Zenodo
+  version: "v0.1"
+  doi: 10.5281/zenodo.23668958
+  url: "https://doi.org/10.5281/zenodo.23668958"
