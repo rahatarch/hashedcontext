@@ -2,7 +2,7 @@
 
 **Scaling GPU KV-Cache Efficiency and Inference Concurrency for Autonomous Agents: A Dual-Mode Architecture**
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23698048.svg)](https://doi.org/10.5281/zenodo.23698048)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23771891.svg)](https://doi.org/10.5281/zenodo.23771891)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](LICENSE)
 ![Status: preprint v0.3](https://img.shields.io/badge/status-preprint%20v0.3-orange.svg)
 
@@ -12,11 +12,11 @@
 
 | Version | Date | PDF | Archive |
 |---|---|---|---|
-| **v0.3** (latest) | 2026-10-29 | [`paper/HashedContext-draft-v0.3.pdf`](paper/HashedContext-draft-v0.3.pdf) | Not yet archived on Zenodo |
+| **v0.3** (latest) | 2026-10-29 | [`paper/HashedContext-draft-v0.3.pdf`](paper/HashedContext-draft-v0.3.pdf) | Zenodo · [10.5281/zenodo.23771891](https://doi.org/10.5281/zenodo.23771891) |
 | v0.2 | 2026-10-27 | [`paper/HashedContext-draft-v0.2.pdf`](paper/HashedContext-draft-v0.2.pdf) | Zenodo · [10.5281/zenodo.23698048](https://doi.org/10.5281/zenodo.23698048) |
 | v0.1 | 2026-10-26 | [`paper/HashedContext-draft-v0.1.pdf`](paper/HashedContext-draft-v0.1.pdf) | Zenodo · [10.5281/zenodo.23668958](https://doi.org/10.5281/zenodo.23668958) |
 
-The v0.1 and v0.2 PDFs in this repository are identical to the files archived on Zenodo. The concept DOI [10.5281/zenodo.23668957](https://doi.org/10.5281/zenodo.23668957) always resolves to the newest archived version.
+The PDFs in this repository are identical to the files archived on Zenodo. The concept DOI [10.5281/zenodo.23668957](https://doi.org/10.5281/zenodo.23668957) always resolves to the newest version.
 
 ![HashedContext overview: append-only context vs. HashedContext, the HashGate operation, and the serving stack with the local HashVault](assets/overview.png)
 
@@ -113,7 +113,7 @@ The differences are one or two cases, within the noise of 30 samples on one mode
 - [x] Reference implementation and simulation harness (fleet, GPU serving simulator, gateway load test)
 - [x] Dual-mode architecture (Mode A / Mode B) with simulated trade-offs
 - [x] First live-LLM test of Mode B diff chains
-- [ ] Preprint v0.3 archived on Zenodo
+- [x] Preprint v0.3 archived on Zenodo, adding the dual-mode architecture, simulated validation and corrections
 - [ ] Larger live-LLM evaluation across models and tasks
 - [ ] Measurements on physical GPUs
 - [ ] Submission to arXiv / a peer-reviewed venue
@@ -125,21 +125,21 @@ The differences are one or two cases, within the noise of 30 samples on one mode
 
 ## Citation
 
-If you reference this work, please cite the latest archived version, currently v0.2 (see also [`CITATION.cff`](CITATION.cff)):
+If you reference this work, please cite the latest version (see also [`CITATION.cff`](CITATION.cff)):
 
 ```bibtex
 @misc{hasan2026hashedcontext,
-  title     = {Scaling GPU KV-Cache Efficiency and Inference Concurrency for Autonomous Agents with HashedContext},
+  title     = {Scaling GPU KV-Cache Efficiency and Inference Concurrency for Autonomous Agents with HashedContext: A Dual-Mode Architecture},
   author    = {Hasan, Rahat},
   year      = {2026},
   publisher = {Zenodo},
-  version   = {v0.2},
-  doi       = {10.5281/zenodo.23698048},
-  url       = {https://doi.org/10.5281/zenodo.23698048}
+  version   = {v0.3},
+  doi       = {10.5281/zenodo.23771891},
+  url       = {https://doi.org/10.5281/zenodo.23771891}
 }
 ```
 
-To cite the work independent of version, use the concept DOI [10.5281/zenodo.23668957](https://doi.org/10.5281/zenodo.23668957). Once v0.3 is archived on Zenodo, this section will point to its DOI.
+To cite the work independent of version, use the concept DOI [10.5281/zenodo.23668957](https://doi.org/10.5281/zenodo.23668957).
 
 ## License
 

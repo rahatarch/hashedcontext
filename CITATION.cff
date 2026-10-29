@@ -1,17 +1,20 @@
 cff-version: 1.2.0
 message: "If you reference this work, please cite it as below."
 type: article
-title: "Scaling GPU KV-Cache Efficiency and Inference Concurrency for Autonomous Agents with HashedContext"
+title: "Scaling GPU KV-Cache Efficiency and Inference Concurrency for Autonomous Agents with HashedContext: A Dual-Mode Architecture"
 authors:
   - family-names: Hasan
     given-names: Rahat
     email: rahathasan5773@gmail.com
     affiliation: Akkhar-Labs
     orcid: "https://orcid.org/0009-0003-6184-5269"
-version: "0.2"
-date-released: 2026-10-27
-doi: 10.5281/zenodo.23698048
+version: "0.3"
+date-released: 2026-10-29
+doi: 10.5281/zenodo.23771891
 identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23771891
+    description: "Version v0.3 archived on Zenodo"
   - type: doi
     value: 10.5281/zenodo.23698048
     description: "Version v0.2 archived on Zenodo"
@@ -23,7 +26,7 @@ identifiers:
     description: "Concept DOI; resolves to the latest version on Zenodo"
 license: CC-BY-4.0
 repository-code: "https://github.com/rahatarch/hashedcontext"
-url: "https://doi.org/10.5281/zenodo.23698048"
+url: "https://doi.org/10.5281/zenodo.23771891"
 keywords:
   - LLM inference
   - KV-cache
@@ -33,9 +36,11 @@ keywords:
   - GPU memory
   - prefix caching
   - RadixAttention
+  - dual-mode architecture
+  - diff-based context
 preferred-citation:
   type: article
-  title: "Scaling GPU KV-Cache Efficiency and Inference Concurrency for Autonomous Agents with HashedContext"
+  title: "Scaling GPU KV-Cache Efficiency and Inference Concurrency for Autonomous Agents with HashedContext: A Dual-Mode Architecture"
   authors:
     - family-names: Hasan
       given-names: Rahat
@@ -44,6 +49,6 @@ preferred-citation:
   year: 2026
   publisher:
     name: Zenodo
-  version: "v0.2"
-  doi: 10.5281/zenodo.23698048
-  url: "https://doi.org/10.5281/zenodo.23698048"
+  version: "v0.3"
+  doi: 10.5281/zenodo.23771891
+  url: "https://doi.org/10.5281/zenodo.23771891"
