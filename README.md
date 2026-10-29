@@ -1,40 +1,36 @@
 # HashedContext
 
-**Scaling GPU KV-Cache Efficiency and Inference Concurrency for Autonomous Agents**
+**Scaling GPU KV-Cache Efficiency and Inference Concurrency for Autonomous Agents: A Dual-Mode Architecture**
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23698048.svg)](https://doi.org/10.5281/zenodo.23698048)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](LICENSE)
-![Status: preprint v0.2](https://img.shields.io/badge/status-preprint%20v0.2-orange.svg)
+![Status: preprint v0.3](https://img.shields.io/badge/status-preprint%20v0.3-orange.svg)
 
-> **Preprint, not peer-reviewed.** Every version is permanently archived on Zenodo with its own DOI. v0.2 adds figures and minor fixes to v0.1; the method and the measured results are unchanged.
+> **Preprint, not peer-reviewed.** v0.3 is a major revision. It corrects several numbers and formulas from v0.1/v0.2, adds a second prompt layout (the dual-mode architecture), and replaces analytical projections with simulated measurements and a first live-LLM test. See [What's new in v0.3](#whats-new-in-v03).
 
 **Author:** Rahat Hasan · [Akkhar-Labs](https://github.com/Akkhar-Labs) · Bogura, Bangladesh · ORCID [0009-0003-6184-5269](https://orcid.org/0009-0003-6184-5269)
 
 | Version | Date | PDF | Archive |
 |---|---|---|---|
-| **v0.2** (latest) | 2026-10-27 | [`paper/HashedContext-draft-v0.2.pdf`](paper/HashedContext-draft-v0.2.pdf) | Zenodo · [10.5281/zenodo.23698048](https://doi.org/10.5281/zenodo.23698048) |
+| **v0.3** (latest) | 2026-10-29 | [`paper/HashedContext-draft-v0.3.pdf`](paper/HashedContext-draft-v0.3.pdf) | Not yet archived on Zenodo |
+| v0.2 | 2026-10-27 | [`paper/HashedContext-draft-v0.2.pdf`](paper/HashedContext-draft-v0.2.pdf) | Zenodo · [10.5281/zenodo.23698048](https://doi.org/10.5281/zenodo.23698048) |
 | v0.1 | 2026-10-26 | [`paper/HashedContext-draft-v0.1.pdf`](paper/HashedContext-draft-v0.1.pdf) | Zenodo · [10.5281/zenodo.23668958](https://doi.org/10.5281/zenodo.23668958) |
 
-The PDFs in this repository are identical to the files archived on Zenodo. The concept DOI [10.5281/zenodo.23668957](https://doi.org/10.5281/zenodo.23668957) always resolves to the newest version.
+The v0.1 and v0.2 PDFs in this repository are identical to the files archived on Zenodo. The concept DOI [10.5281/zenodo.23668957](https://doi.org/10.5281/zenodo.23668957) always resolves to the newest archived version.
 
 ![HashedContext overview: append-only context vs. HashedContext, the HashGate operation, and the serving stack with the local HashVault](assets/overview.png)
 
-*Figure 1 of the paper. (a) Append-only agents keep one full copy of a file per turn. (b) HashedContext replaces historical copies with ~35-token SHA-256 stubs and keeps one live copy at the prompt tail. (c) Historical bytes live in a local content-addressed vault and are resolved on demand.*
+*Overview figure from v0.2. (a) Append-only agents keep one full copy of a file per turn. (b) HashedContext replaces historical copies with SHA-256 stubs and keeps one live copy at the prompt tail. (c) Historical bytes live in a local content-addressed vault and are resolved on demand. In v0.3 the stub size is corrected to ~67 tokens, from the ~35 shown here.*
 
 ---
 
 ## The problem
 
-Autonomous coding agents (Claude Code, Cursor, Cline, Devin, …) re-send the same unchanged source files into the conversation on almost every turn. Over a long session, prompt size grows roughly as `O(M × N × P)` (files × tokens per file × turns). That wastes GPU KV-cache memory, slows prefill and decoding, and limits how many sessions an inference server can serve concurrently.
+Autonomous coding agents (Claude Code, Cursor, Cline, Devin, …) re-send the same unchanged source files into the conversation on almost every turn. With `M` files of `N` tokens over `P` turns, each prompt grows as `O(P × M × N)` and the cumulative prompt load as `O(P² × M × N)`. That wastes GPU KV-cache memory, slows prefill and decoding, and limits how many sessions an inference server can serve at once.
 
 ## The idea
 
-HashedContext is a **content-addressed context architecture** for multi-turn agents. It treats conversation history as a *state-transition log*, not a filesystem archive:
-
-1. **SHA-256 hash-gated file tracking:** every file observation is hashed before it is serialized.
-2. **Historical deduplication via `[HASH_STUB]`:** past copies of a file are replaced by a compact (~35-token) stub.
-3. **Attention-anchored authoritative tail:** exactly one live, full copy of each active file sits at the end of the prompt.
-4. **On-demand resolution from a local HashVault:** any historical version can be restored losslessly by its hash when needed.
+HashedContext is a **content-addressed context architecture** for multi-turn agents. It treats conversation history as a *state-transition log*, not a filesystem archive. Every file observation is SHA-256 hashed. Past copies of a file are replaced by a compact `[HASH_STUB]` (~67 tokens). Every version is kept in a local content-addressed vault and can be restored losslessly by its hash.
 
 ```
 [HASH_STUB]
@@ -44,33 +40,69 @@ state: CACHED
 [/HASH_STUB]
 ```
 
-It can run **client-side** (IDE extensions, agent CLIs) or **server-side** as a gateway filter in front of engines like vLLM or SGLang, with no changes to model weights or the inference engine.
+### Dual-mode architecture
 
-## Early results
+The best prompt layout depends on whether the serving stack keeps a warm prefix cache, so HashedContext offers two lossless modes:
 
-Initial measurements on DeepSeek V4 production endpoints (5-turn refactoring session on a ~4,000-token TypeScript file):
+- **Mode A: Authoritative Tail.** Every historical file copy becomes a stub, and one complete, self-attesting copy of each current file sits at the end of the prompt. Uses the least KV memory.
+- **Mode B: Lazy Tail.** History is never rewritten. Each file is sent in full once, unchanged re-reads become stubs, and changes are sent as line diffs. After `max_diffs_before_rebase` diffs (default 10) the full file is sent again. Because each prompt is a strict prefix of the next, a prefix cache can reuse almost all of it.
 
-| Metric | Conventional | HashedContext | Reduction |
-|---|---:|---:|---:|
-| Prompt tokens (turn 4) | 27,747 | 11,746 | **57.7%** |
-| Normalized turn 5 | 31,747 | 11,746 | **63.0%** |
-| File-specific tokens | 20,000 | 4,140 | **79.3%** |
+Both modes can run **client-side** (IDE extensions, agent CLIs) or **server-side** as a gateway filter in front of engines like vLLM or SGLang, with no changes to model weights or the inference engine.
 
-In this initial evaluation, the model still detected a single-line mutation in the authoritative tail with no observed loss in diff-tracking accuracy.
+## Results (v0.3)
 
-> Larger-scale benchmarks (more models, tasks, and session lengths) are in progress. All figures in the paper other than the table above are analytical projections from the paper's cost model, not measurements, and are labelled as such.
+Measured with a reference implementation driven by 20,000 scripted coding agents on four real open-source repositories (824,728 turns, exact BPE token counts), and a GPU serving simulator using H100 constants. GPU numbers come from simulation, not physical hardware.
 
-## What's new in v0.2
+| | Mode A: Authoritative Tail | Mode B: Lazy Tail (N=10) |
+|---|---:|---:|
+| KV-cache per request vs append-only | **−88.7%** | −84.8% |
+| KV-cache vs append-only + compaction | **−69.0%** | −58.2% |
+| Prompt tokens computed, warm prefix cache | +3.6% | **−88.1%** |
+| Prompt tokens computed, no prefix cache | **−88.7%** | −84.8% |
+| 16-GPU cluster, 512 agents: turns/hour vs baseline | **3.57×** | 3.21× |
+| Finds an external one-line change without vault lookup | file only | file, line and text |
 
-- New system overview diagram in the Introduction (Figure 1), replacing the text-only comparison figure of v0.1: append-only vs. HashedContext context stacks, the HashGate operation, and the serving stack with the HashVault.
-- Five new figures from the paper's analytical model:
-  - resident KV-cache over a session vs. post-hoc compaction (§2.4)
-  - prompt assembly and the authoritative tail (§3.2)
-  - GPU memory budget and batch concurrency on one 80 GB GPU (§5.5)
-  - radix-tree / prefix-cache structure across sessions and exploration branches (§7.3)
-  - cumulative cost of runaway agent loops under a fixed budget (§8.4)
-- Figure tracing measured file-token residency turn by turn (§11).
-- Typesetting fix for the code listings in §11.
+Every simulated session reconstructed byte-exact under both modes.
+
+**Which mode to use**
+
+| Scenario | Recommended |
+|---|---|
+| Prefix cache on, light load (1–8 agents per GPU) | **Mode B** (1.07–1.76× the turns of Mode A) |
+| Prefix cache on, heavy load (16+ agents per GPU) | **Mode A** (Mode B: 0.80–0.91×) |
+| No prefix cache, or requests not routed to the same cache | **Mode A** (Mode B: 0.66–0.91×) |
+| Billed API with discounted cached input tokens | **Mode B** |
+| Lowest KV memory per request | **Mode A** |
+| Long edit loops, accuracy-critical work | **Mode A**, or **Mode B with N=5** |
+
+**Live-LLM diff-chain test.** Mode B's main risk is that the model has to rebuild a file from its last full copy plus a chain of diffs ("lost in the middle"). We tested this on `deepseek-v4.1-flash` (30 cases; a file with 10 edits; the model is asked for the line that follows a given line):
+
+| Prompt | Diffs to apply | Correct |
+|---|---:|---:|
+| Append-only | 0 | 29/30 (96.7%) |
+| Mode A | 0 | 28/30 (93.3%) |
+| Mode B, N=10 | 10 | 27/30 (90.0%) |
+| Mode B, N=5 | 4 | 28/30 (93.3%) |
+
+The differences are one or two cases, within the noise of 30 samples on one model. For accuracy-critical work we recommend `max_diffs_before_rebase = 5`. Larger, multi-model tests are planned.
+
+**Pilot session.** A single 5-turn session on DeepSeek V4 (Mode A) cut prompt tokens by 57.7% at turn 4. It is one sample and illustrates the mechanism only.
+
+## What's new in v0.3
+
+**New**
+- **Dual-mode architecture.** Mode B (Lazy Tail) with line diffs and a bounded diff chain (`max_diffs_before_rebase`), a new algorithm, and scenario-based recommendations for choosing a mode.
+- **Simulated validation** replaces the analytical projections: a 20,000-agent fleet, a GPU serving simulator, a real HTTP gateway load test, and mechanical needle tests.
+- **First live-LLM test** of Mode B diff chains.
+
+**Corrections to v0.1/v0.2**
+- Stub size is ~67 tokens, not ~35. SHA-256 costs ~1.8 ms/MB, not 2–5 µs/MB. Both are still negligible next to prefill.
+- Cost is still quadratic in the number of turns. HashedContext shrinks the coefficient by ~25–30× but does not make it linear, and the cost ratio tends to a finite constant, not infinity. The budget-limited loop-depth formula is replaced.
+- Append-only prompts already achieve high prefix-cache hit rates. Mode A's benefit is lower KV residency, not higher cache reuse.
+- Decode speedup counts model-weight reads: 1.39× per request at batch size 1, with the larger gain from bigger batches.
+- In gateway-native mode the gateway still parses the full payload. Network and parsing savings require edge-native mode.
+- The pilot telemetry table drops the extrapolated "normalized turn 5" row and the analytical "file-specific tokens" row.
+- Signal-to-noise, Amdahl and attention-entropy statements are corrected or labelled as hypotheses.
 
 ## Status
 
@@ -78,8 +110,12 @@ In this initial evaluation, the model still detected a single-line mutation in t
 - [x] Early benchmark on a production endpoint
 - [x] Preprint v0.1 archived on Zenodo with a DOI
 - [x] Preprint v0.2 archived on Zenodo, adding figures for architecture, memory, caching, and cost analysis
-- [ ] Extended benchmarks across models and workloads
-- [ ] Reference implementation
+- [x] Reference implementation and simulation harness (fleet, GPU serving simulator, gateway load test)
+- [x] Dual-mode architecture (Mode A / Mode B) with simulated trade-offs
+- [x] First live-LLM test of Mode B diff chains
+- [ ] Preprint v0.3 archived on Zenodo
+- [ ] Larger live-LLM evaluation across models and tasks
+- [ ] Measurements on physical GPUs
 - [ ] Submission to arXiv / a peer-reviewed venue
 
 ## Related work by the author
@@ -89,7 +125,7 @@ In this initial evaluation, the model still detected a single-line mutation in t
 
 ## Citation
 
-If you reference this work, please cite the latest archived version (see also [`CITATION.cff`](CITATION.cff)):
+If you reference this work, please cite the latest archived version, currently v0.2 (see also [`CITATION.cff`](CITATION.cff)):
 
 ```bibtex
 @misc{hasan2026hashedcontext,
@@ -103,7 +139,7 @@ If you reference this work, please cite the latest archived version (see also [`
 }
 ```
 
-To cite the work independent of version, use the concept DOI [10.5281/zenodo.23668957](https://doi.org/10.5281/zenodo.23668957).
+To cite the work independent of version, use the concept DOI [10.5281/zenodo.23668957](https://doi.org/10.5281/zenodo.23668957). Once v0.3 is archived on Zenodo, this section will point to its DOI.
 
 ## License
 
