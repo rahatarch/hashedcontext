@@ -2,7 +2,7 @@
 
 **Scaling GPU KV-Cache Efficiency and Inference Concurrency for Autonomous Agents: A Dual-Mode Architecture**
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23771891.svg)](https://doi.org/10.5281/zenodo.23771891)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23668957.svg)](https://doi.org/10.5281/zenodo.23668957)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](LICENSE)
 ![Status: preprint v0.3](https://img.shields.io/badge/status-preprint%20v0.3-orange.svg)
 
@@ -10,13 +10,15 @@
 
 **Author:** Rahat Hasan · [Akkhar-Labs](https://github.com/Akkhar-Labs) · Bogura, Bangladesh · ORCID [0009-0003-6184-5269](https://orcid.org/0009-0003-6184-5269)
 
+📄 **[Read the latest version of the paper on Zenodo](https://doi.org/10.5281/zenodo.23668957)**: this link always opens the newest version.
+
 | Version | Date | PDF | Archive |
 |---|---|---|---|
 | **v0.3** (latest) | 2026-10-29 | [`paper/HashedContext-draft-v0.3.pdf`](paper/HashedContext-draft-v0.3.pdf) | Zenodo · [10.5281/zenodo.23771891](https://doi.org/10.5281/zenodo.23771891) |
 | v0.2 | 2026-10-27 | [`paper/HashedContext-draft-v0.2.pdf`](paper/HashedContext-draft-v0.2.pdf) | Zenodo · [10.5281/zenodo.23698048](https://doi.org/10.5281/zenodo.23698048) |
 | v0.1 | 2026-10-26 | [`paper/HashedContext-draft-v0.1.pdf`](paper/HashedContext-draft-v0.1.pdf) | Zenodo · [10.5281/zenodo.23668958](https://doi.org/10.5281/zenodo.23668958) |
 
-The PDFs in this repository are identical to the files archived on Zenodo. The concept DOI [10.5281/zenodo.23668957](https://doi.org/10.5281/zenodo.23668957) always resolves to the newest version.
+The PDFs in this repository are identical to the files archived on Zenodo. Each DOI in the table opens that exact version. The permanent DOI [10.5281/zenodo.23668957](https://doi.org/10.5281/zenodo.23668957), used by the badge and the link above, always resolves to the newest version.
 
 ![HashedContext overview: append-only context vs. HashedContext, the HashGate operation, and the serving stack with the local HashVault](assets/overview.png)
 
